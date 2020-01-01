@@ -1,5 +1,15 @@
-const express = require('express')
-const app = express()
-const port = 3000
+let express = require('express');
+let app = express();
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use(express.static('public'));
+
+
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/', function (req, res) {
+
+    res.sendFile('index.html' ,  { root: __dirname });
+
+
+});
+
+app.listen('8000');

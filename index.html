@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Document</title>
+		<base href="/">
+</head>
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<!--<link rel="stylesheet" href="/css/fontawesome.min.css">-->
+<link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Bungee&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/custom-main.css">
+<link rel="stylesheet" href="/css/avgrund.css">
+<style>
+
+</style>
+<body>
+
+		<div class="container">
+				<div class="row">
+						<div class="col-4 mt-3">
+								<div class="shadow p-2  bg-white rounded">
+								<div class="card">
+
+										<div class="card-body p-0" >
+												<video playsinline muted autoplay></video>
+												<canvas id="faceDetector"></canvas>
+										</div>
+
+										<button  onclick="init()" type="button" class="btn btn-info ">Kamera Aç</button>
+										<button  onclick="capture()" type="button"  class="btn btn-info mt-2 none">Görüntüyü Al</button>
+
+								</div>
+						</div>
+						</div>
+						<div class="col-4 mt-3">
+								<div class="shadow p-2 mb-5 bg-white rounded">
+
+								<div class="card">
+										<div class="card-body p-0">
+
+												<canvas id="canvasImg"></canvas>
+										</div>
+										<button onclick="saveAs()" type="button" class="btn btn-info">Kaydet</button>
+								</div>
+						</div>
+						</div>
+		</div>
+
+
+<script src="/js/face-api.js"></script>
+<script src="/js/avgrund.js"></script>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/adapter.js"></script>
+
+		<script>
+
+            let videoStream = document.querySelector('video');
+            const canvas = document.querySelector('#faceDetector');
+
+            const canvasImg = document.querySelector('#canvasImg');
+			let context =  canvasImg.getContext('2d');
+
+            function capture()
+			{
+					console.log(videoStream);
+                canvasImg.width = videoStream.videoWidth;
+                canvasImg.height = videoStream.videoHeight;
+
+              context.drawImage(videoStream , 0 , 0 , canvasImg.width , canvasImg.height);
+
+			}
+
+			function saveAs() {
+                   let link = document.createElement('a');
+                    link.download = 'filename.png';
+                    link.href = canvasImg.toDataURL("image/png");
+                    link.click();
+                    link = undefined;
+
+			}
+
+
+
+            async  function init() {
+                let handleSuccess = function(stream) {
+                    videoStream.srcObject = stream;
+                   setTimeout(function () {
+                       $("button.none").removeClass('none');
+                   } , 1000);
+                };
+
+                let handleError = function(error) {
+                    console.log('Kamera başlatılamadı hata: ', error.message, error.name);
+                };
+				await faceapi.loadSsdMobilenetv1Model('/js/models');
+				await faceapi.loadTinyFaceDetectorModel('/js/models');
+				await faceapi.loadMtcnnModel('/js/models');
+				await faceapi.loadFaceLandmarkModel('/js/models');
+				await faceapi.loadFaceLandmarkTinyModel('/js/models');
+				await faceapi.loadFaceRecognitionModel('/js/models');
+				await faceapi.loadFaceExpressionModel('/js/models');
+
+                await  navigator.mediaDevices.getUserMedia({ audio: false, video: { height:249 , width:332 } }).then(handleSuccess).catch(handleError);
+
+            }
+
+            videoStream.addEventListener('play', (e) => {
+             //   const canvas = faceapi.createCanvasFromMedia(videoStream);
+                const displaySize = { width: videoStream.videoWidth , height: videoStream.videoHeight };
+                faceapi.matchDimensions(canvas, displaySize);
+                setInterval(async () => {
+                    const detections = await faceapi.detectAllFaces(videoStream, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+                     // console.log(detections);
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+                     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                     faceapi.draw.drawDetections(canvas, resizedDetections);
+                     faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+                    // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+                }, 200);
+            });
+			//
+            // document.querySelector('#videoReq').addEventListener('click', e => init(e));
+
+
+		</script>
+</body>
+</html>
