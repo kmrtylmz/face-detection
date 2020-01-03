@@ -9,10 +9,6 @@ body {
     font-size: 14px;
 
 }
-.card-body {
-    height: 249px;
-    position: relative;
-}
 
 canvas {
     position: absolute;
@@ -32,6 +28,9 @@ video  {
     /*opacity: 1.0;*/
     filter:contrast(140%) brightness(150%) saturate(1.1) opacity(1);
 }
+img {
+    filter: contrast(140%) brightness(150%) saturate(1.1) opacity(1);
+}
 
 
 .none {
@@ -39,92 +38,10 @@ video  {
 }
 
 
-.global-chat {
-    font-family: 'Bungee', cursive;
-    font-size: 17px;
-    color: #778899;
-    font-weight: 400;
-}
-
-
-
-li.media:hover {
-    background: #f8f9fa;
-    cursor: pointer;
-}
-.nav-link {
-    padding: 0;
-}
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-    color: #495057;
-  background-color: #fff;
-}
-
-a.nav-link  , a.footer {
-    color: #495057;
-    text-decoration: none;
-    background-color: transparent;
-}
-
-.scroll-list {
-height: 20em;
-overflow-y: scroll;
-overflow-x: hidden;
-}
-
 
 .text-blue {
     color:#4a8fba;
 }
-
-
-a.head {
-    color:#4d91bb;
-    font-size:16px;
-    font-family: 'Bungee', cursive;
-    text-decoration: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-
-}
-
-
-a.heading {
-    color: #276dc1!important ;
-    text-shadow: 2px 1px 0px #fff, 3px 2px 0px rgba(0,0,0,0.15);
-    -webkit-mask-image: linear-gradient(-75deg, rgba(0,0,0,.6) 30%, #000 40%, rgba(0,0,0,.6) 100%);
-    -webkit-mask-size: 200%;
-    animation: shine 8s linear infinite;
-}
-.bg-custom {
-    background: #FFF8DC!important;
-}
-
-a.files {
-    color: #6f42c1d9;
-    font-size: 12px;
-    font-family: 'Bungee', cursive;
-}
-a.files:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
-/* Wifi - Icons Animated */
-
-#ids {
-    -ms-transform: rotate(135deg); /* IE 9 */
-    -webkit-transform: rotate(135deg); /* Safari 3-8 */
-    transform: rotate(135deg);
-
-}
-
-/* Wifi End */
-
-
-/* Custom Css End */
 
 
 
@@ -174,13 +91,6 @@ input[type="color"]:focus,
     border-radius:15px;
 }
 
-li.list-group-item {
-    padding: .20rem 0.75rem!important;
-}
-
-mark {
-    background-color: #20c9972b;
-}
 
 /* Override - Boostrap End */
 

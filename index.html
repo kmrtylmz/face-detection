@@ -5,18 +5,12 @@
 		<meta name="viewport"
 			  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>Document</title>
-		<base href="/">
+		<title>Yüz Tanıma Sistemi - Testing</title>
 </head>
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
-<!--<link rel="stylesheet" href="/css/fontawesome.min.css">-->
 <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css?family=Bungee&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="/css/custom-main.css">
-<link rel="stylesheet" href="/css/avgrund.css">
 <style>
 
 </style>
@@ -26,12 +20,12 @@
 				<div class="shadow p-2  bg-white rounded">
 						<div class="row d-flex justify-content-center">
 							<div class="col-12 text-center p-3">
-								<h3>Görüntü Tanımlama  </h3>
-									<small>| Sadece 1 Kişi Baz Alınarak Yazılmıştır. |</small>
+								<h3>Yüz Tanımlama ve Analizi  </h3>
+									<small> Not : | Sadece 1 Kişi Baz Alınarak Yazılmıştır.Çok Fazla Hareketli Görüntünün Tespit Çizimlerinde Kaymalar Olabilir Ama Eşleşmeler Doğrudur. Kameranın FPS ayarı çok dikkate alınmalıdır. </small>
 							</div>
 
 								<div class="col p-3">
-								<div class="shadow mx-auto bg-white rounded p-0" style="height: 360px; width: 480px; position: relative;">
+								<div class="shadow mx-auto bg-white rounded p-0"  style="height: 360px; width: 480px; position: relative;">
 
 												<video playsinline muted autoplay ></video>
 												<canvas id="faceDetector"></canvas>
@@ -39,9 +33,9 @@
 								</div>
 										<div class="row p-3">
 												<div class="col btn-group" role="group" aria-label="Basic example">
-														<button onclick="init()" type="button" class="btn btn-info camRequest">Kamerayı Aç</button>
+														<button onclick="init('saveAs')" type="button" class="btn btn-danger camRequest">Yüzü Algıla ve Kaydet</button>
 														<!--<button  onclick="" type="button"  class="btn btn-info ml-3"></button>-->
-														<button  onclick="" type="button"  class="btn btn-success ml-3">Görüntü Durumu</button>
+														<button  onclick="init('find')" type="button"  class="btn btn-success camRequest ml-3">Yüzü Algıla ve Bul</button>
 
 												</div>
 
@@ -55,10 +49,10 @@
 												<div class="row p-3">
 														<form action="" class="form-inline" method="GET">
 														<div class="col">
-																<input type="text" class="form-control" name="username" placeholder="Kim olduğunu yazın.." >
+																<input type="text" required class="form-control" name="username" placeholder="Kim olduğunu yazın.." disabled>
 														</div>
 														<div class="col">
-																<button type="submit" class="btn btn-info ">Kaydet</button>
+																<button type="submit" class="btn btn-info " disabled>Kaydet</button>
 														</div>
 														</form>
 												</div>
@@ -71,16 +65,18 @@
 
 
 
-						<div class="row justify-content-center">
-						<div class="col-12 text-center p-3">
+						<div class="row justify-content-center none" id="findBestMatch">
+						<div class="col-12 text-center p-3 " >
 								<h3>Bu kişi aşağıdaki kişiyle eşleşiyor mu ?</h3>
-								<h4 id="thatwho">Ahmet</h4>
-								<a href="javascript:void(0)" type="button" class="btn btn-info">En Uygun Sonucun Fotografı </a>
+								<h4 id="thatwho">Mert</h4>
+								<a href="" type="button" class="btn btn-info ">Tekrar Denemek için Tıklayın</a><br/>
+								<a href="javascript:void(0)" type="button" class="btn btn-success mt-2">En Uygun Sonucun Fotografı </a>
+
 						</div>
 
 						<div class="col mt-3">
-								<div class="shadow mx-auto bg-white rounded p-0" style="height: 360px; width: 480px; position: relative;">
-												<canvas id="canvasImgSearch"></canvas>
+								<div class="shadow mx-auto bg-white rounded p-0"  style="height: 360px; width: 480px; position: relative;">
+										<img src="" id="imgSearch" alt="">
 								</div>
 						</div>
 
@@ -89,7 +85,7 @@
 			</div>
 
 <div class="container-fluid">
-		<div class="row justify-content-center text-center p-3">
+		<div class="row justify-content-center text-center p-2">
 
   				<small> Author @ Mert Yılmaz.  Test Amaçlı Yazılmıştır. </small>
 		</div>
@@ -97,45 +93,48 @@
 
 
 
-
-
 <script src="/js/face-api.js"></script>
-<script src="/js/avgrund.js"></script>
 <script src="/js/jquery-3.4.1.min.js"></script>
-<script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<!-- Tarayıcı farklılıkları için Adapter JS - Nagivator için.. -->
 <script src="/js/adapter.js"></script>
 
 		<script>
 
             let videoStream = document.querySelector('video'); // ınput
-            const canvas = document.querySelector('#faceDetector');
+           const canvas = document.querySelector('#faceDetector'); // detector için.
+
 
             const canvasImg = document.querySelector('#canvasImg');
 			let context =  canvasImg.getContext('2d');
 
-			let detector;  // Arayacı
-
-            function capture()
-			{
-				//	console.log(videoStream);
-                canvasImg.width = videoStream.scrollWidth;
-                canvasImg.height = videoStream.scrollHeight;
-
-                context.drawImage(videoStream , 0 , 0 , canvasImg.width , canvasImg.height);
-
-			}
-			let description;
-			let descriptions = [];
-			let faceMatcher;
+			let detector;  // SetInterval detector..
+            let description;  // Kaydedilecek Descriptor
+            let descriptions = [];  // Gecici Array Dizin..
+            let faceMatcher;  // Descriptorların listesini tutar.
 
             let db;
             let transaction;
             let checkDb;
 
+         //   let recordedBlobs = [];  // Anlık Görüntü Yakalamak için..
+
+
+            // Videodan Resmi Al
+            function capture()
+			{
+                canvasImg.width = videoStream.scrollWidth;
+                canvasImg.height = videoStream.scrollHeight;
+				// Videodan Canvas'a çizim yaptırdık..
+                context.drawImage(videoStream , 0 , 0 , canvasImg.width , canvasImg.height);
+
+			}
+
+
             $(document).ready(async () => {
 
-                await faceapi.loadSsdMobilenetv1Model('/js/models');
+                /*  Modulleri Yükle */
+                // await faceapi.loadSsdMobilenetv1Model('/js/models');
                 await faceapi.loadTinyFaceDetectorModel('/js/models');
                 //await faceapi.loadMtcnnModel('/js/models');
                 await faceapi.loadFaceLandmarkModel('/js/models');
@@ -145,11 +144,12 @@
 
                 if (!('indexedDB' in window)) {
                     // Desteklenmiyor Manuel Download..
-                    alert("indexedDb desteklemiyor.");
+                    alert("IndexedDb Desteklemiyor. Uygulama Sağlıklı Çalışmayacaktır.");
                 }
 
                 else {
-                     checkDb = indexedDB.open('FaceRecognization', 1);
+                    /* IndexedDb Oluştur.. */
+					checkDb = indexedDB.open('FaceRecognization', 1);
                     checkDb.onupgradeneeded = function (e) {
                         db = e.target.result;
                         console.log('IndexedDB Açıldı...');
@@ -157,37 +157,39 @@
                             db.createObjectStore('faceArrays', {autoIncrement: true}); // Blobs adında bir tablo..
                             transaction = event.target.transaction; // işlem durumu
                             transaction.oncomplete = e => {
-                                console.log('DB oluşturuldu..');
+                                console.log('DB Table Objecti oluşturuldu..');
                             };
                         }
                     };
 
-                    checkDb.onsuccess =  function (e) {
+                    checkDb.onsuccess = function () {
                         db = checkDb.result;
                         try {
                             let store = db.transaction(['faceArrays'], 'readonly').objectStore('faceArrays');  // default readOnly olacak..
                             let countRequest = store.count();
-                            countRequest.onsuccess =  function() {
+                            countRequest.onsuccess =   function() {
                                 if(countRequest.result){
-                                    store.getAll().onsuccess = function(event) {    // getAll desteklemezse Cursor kullanılır.
-                                       let objects = event.target.result;
-                                       let objLength = event.target.result.length;
-                                       for  (let i = 0;  i < objLength; i++) {
-                                        descriptions.push(new faceapi.LabeledFaceDescriptors(objects[i].username , [ objects[i].values ] ));
-                                       }
-                                      faceMatcher = new faceapi.FaceMatcher(descriptions, 0.6);
+                                        store.getAll().onsuccess  =  function (event) {
+                                            // getAll desteklemezse Cursor kullanılır.
+                                            let objects = event.target.result;
 
+                                            let objLength = event.target.result.length;
+
+                                            for  (let i = 0;  i < objLength; i++) {
+
+                                                 descriptions.push(new faceapi.LabeledFaceDescriptors(objects[i].username , [ objects[i].values ] ));
+
+                                                if (i === (objLength - 1)) {
+                                                    faceMatcher = new faceapi.FaceMatcher(descriptions, 0.6);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
-                            };
+                            }
 
-                            countRequest.onerror = function (e) {
-                                console.log(e + "Okuma Başarısız");
-                            };
-
-
-                        } catch (e) {
-                            console.log(e + "İşlemlerde hata oluştu..");
+                        catch (e) {
+                            console.log(e + "IndexedDblerdeki verilere erişelemedi..");
                         }
 
                     }
@@ -196,118 +198,213 @@
 
 
 			$(document).on('submit' , 'form', (e) => {
+
                 e.preventDefault();
-                let user = $("form").find('input[name="username"]').val();
+
+                let user = $("form").find('input[name="username"]').val();  // Kullanıcı adı
+
+                canvasImg.toBlob((blob) => {   // Canvas Blob Dönüşüm..
 
                 if (!('indexedDB' in window)) {
-                    // Desteklenmiyor Manuel Download..
-					alert("indexedDb desteklemiyor.");
+					alert("indexedDb desteklemiyor. Kayıt Başarısız olacak..");
                 }
 
                 else {
-
                         try {
                             let item = {
-                                username: user,
-                                values : description,
-                                created: (new Date()).getTime()
+                                username: user,  // Kullanıcı Adı
+                                values : description,  // Descriptionda FaceDetectorun Float32Array şeklinde
+								blobs : blob,    // Kaydedilen Görüntü Blobu
+                                created: (new Date()).getTime() // tarihte atalım.
                             };
 
-                            let store = db.transaction(['faceArrays'], 'readwrite').objectStore('faceArrays');  // default readOnly olacak..
+                            let store = db.transaction(['faceArrays'], 'readwrite').objectStore('faceArrays');  // Yazmak için.
 
-                            let req = store.add(item);
-
+                            let req = store.add(item);  // Ekleyelim.
+                            /* Durumlar */
                             req.onerror = function (e) {
                                 console.log(e + "Ekleme Başarısız");
                             };
 
-                            req.onsuccess = function (event) {
+                            req.onsuccess = function (e) {
                                 console.log('Ekleme Başarılı..');
+                                alert("Kaydedildi..");
+                                setTimeout(()=>{
+                                    window.location.reload(); // tekrar kamera acılsın die..
+								} , 1000);
 
                             };
-                        } catch (e) {
-                            console.log(e + "İşlemlerde hata oluştu..");
+                        }
+                        catch (e) {
+                            console.log(e + "Kaydedilme işlemlerinde bir hata oluştu..");
                         }
 
 
                 }
+                } , 'image/jpeg'  , 0.95);  // Blob Formatı ve Kalitesi..
 
 			});
 
-		// 	function saveAs() {
-         //           let link = document.createElement('a');
-         //            link.download = 'filename.png';
-         //            link.href = canvasImg.toDataURL("image/png");
-         //            link.click();
-         //            link = undefined;
-		//
-		// 	}
 
-
-            async  function init() {
+            async  function init(parameter) {
              // console.log($(e.currentTarget).prev().children('video')[0]);
 
                 let handleSuccess = function(stream) {
-                    if (typeof stream === 'object')
+                    if (typeof stream === 'object') {
                         videoStream.srcObject = stream;
 
+                        //  window.stream = stream; // Ayrı Recorder Stream Kanalı
+                        //
+                        // /* Baslangıc */
+                        // recordedBlobs = [];
+                        // let options = {mimeType: 'video/webm;codecs=vp9'};
+                        // if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        //     options = {mimeType: 'video/webm;codecs=vp8'};
+                        //     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        //         options = {mimeType: 'video/webm'};
+                        //         if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        //             options = {mimeType: ''};
+                        //         }
+                        //     }
+                        // }
+                        // let mediaRecorder = new MediaRecorder(window.stream, options);
+                        // mediaRecorder.ondataavailable = (event) => {
+                        //     if (event.data && event.data.size > 0) {
+                        //         recordedBlobs.push(event.data);
+                        //     }
+                        // };
+                        // mediaRecorder.start(10); // collect 10ms of data
+
+                        /* Bitiş */
+                    }
+                    $(".camRequest").attr('disabled', true);
+
+                    if (parameter === 'saveAs'){
+                        $("form").find("input").attr('disabled', false);
+                  	    $("form").find("button").attr('disabled', false);
+            	    }
+                    //$(".camRequestS").attr('disabled',true);
+
                     videoStream.addEventListener('play', () => {
-                        //   const canvas = faceapi.createCanvasFromMedia(videoStream);
+
                         const displaySize = { width: videoStream.scrollWidth , height: videoStream.scrollHeight };
+
                         faceapi.matchDimensions(canvas, displaySize);
+
                         detector =  setInterval(async () => {
                             const detections = await faceapi.detectAllFaces(videoStream, new faceapi.TinyFaceDetectorOptions({
-                                // minConfidence : 0.6 ,  // SSD optıons
+                                // minConfidence : 0.6 ,  // SsdMobilenetv1Options
                                 // maxResults : 1
 								inputSize : 416 ,
                                 scoreThreshold : 0.6
                             })).withFaceLandmarks().withFaceDescriptors();
                            // console.log(detections);
 
-
-                            if (detections.length && descriptions.length) {
-
-                                // videoStream.pause();
-
-                                await clearInterval(detector);
-                                const results = faceMatcher.findBestMatch(detections[0].descriptor);
-
-                                console.log("result : " + results.toString());
-                                $("#thatwho").text(results.toString().toUpperCase());
-
-
-                            }
-                            else if(detections.length && !descriptions.length) {
-
+							if( parameter === 'saveAs' && detections.length ) {
                                 await clearInterval(detector);
                                 videoStream.pause();
+                              //  let timeCurrent = videoStream.currentTime - (1/ fps);
+
+                                // const superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+								//
+                                // videoStream.src = window.URL.createObjectURL(superBuffer);
+                               // await videoStream.removeEventListener('play');
+
+                             //   videoStream.currentTime = timeCurrent;
 
                                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
-                                if(detections.length)
-                                description = detections[0].descriptor;
 
-                               // console.log(description);
+                                if(videoStream.paused) {
+                                    console.log('Kamera Durduruldu..');
 
-                                if (resizedDetections.length) {
-                                    await canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                                    await faceapi.draw.drawDetections(canvas, resizedDetections);
-                                    await faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+                                    description = detections[0].descriptor;
+                                    // console.log(description);
+                                    // console.log(resizedDetections);
 
-                                    await capture();
+                                    if (resizedDetections.length) {
 
-                                    if(videoStream.paused) {
-                                        console.log('Kamera Durduruldu..');
-                                     stream.getTracks().forEach(function(track) {
+                                        await canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
+                                        await faceapi.draw.drawDetections(canvas, resizedDetections);
+
+                                        await faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+
+                                        await capture();
+
+                                    }
+
+                                    stream.getTracks().forEach(function(track) {
                                         track.stop();
                                     });
-                                    }
                                 }
-                            }
-                            else {
-                                console.log('Tespit Edilemedi..');
+
+                                // console.log(description);
+
 							}
 
-                        }, 200);
+							else if(parameter === 'find' && detections.length) {
+                                await clearInterval(detector);
+                                videoStream.pause();
+                                $("#findBestMatch").removeClass('none');
+                                $("html, body").animate({scrollTop: $(document).height()}, 2000);
+                                let results;
+                                if (videoStream.paused) {
+                                    try {
+                                        results = faceMatcher.findBestMatch(detections[0].descriptor);
+                                    }
+                                    catch (e) {
+                                        $("#thatwho").html("Kayıt Yok !");
+
+                                    }
+
+                                    // console.log(results.label);
+                                    if (results.label.toUpperCase() !== 'UNKNOWN') {
+                                        try {
+
+                                            let store = db.transaction(['faceArrays'], 'readonly').objectStore('faceArrays');  // default readOnly olacak..
+                                            let countRequest = store.count();
+                                            countRequest.onsuccess = function () {
+                                                if (countRequest.result) {
+                                                    store.getAll().onsuccess = function (event) {
+                                                        for (let y = 0; y < event.target.result.length; y++) {
+                                                            if (event.target.result[y].username === results.label) {
+                                                                let img =  document.getElementById('imgSearch');
+                                                                img.src = URL.createObjectURL(event.target.result[y].blobs);
+
+                                                                img.onload = function () {
+                                                                    // contextSearch.drawImage(img, 0, 0);
+                                                                    URL.revokeObjectURL(img.src);
+                                                                    stream.getTracks().forEach(function(track) {
+                                                                        track.stop();
+                                                                    });
+                                                                };
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch (e) {
+                                            console.log(e);
+                                        }
+                                        $("#thatwho").html("Adı : " + results.label.toUpperCase() + "<br>" + "İlk Eşleşme Olasılığı : % " + (results.distance.toFixed(2) * 100));
+
+                                    }
+
+                                    else {
+                                        $("#thatwho").html("Adı : BULUNAMADI" + "<br>" + "Olasılık : % 0 ");
+                                    }
+
+                                }
+                            }
+
+                            else {
+
+                                // console.log('Tespit Edilemedi.. ');
+							}
+
+                        }, 180 );  // frameRate Değeri.. 1000/12
                     });
                 };
 
@@ -315,30 +412,10 @@
                     console.log('Kamera başlatılamadı hata: ', error.message, error.name);
                 };
 
-                await  navigator.mediaDevices.getUserMedia({ audio: false, video: { height: 360 , width : 480} }).then(handleSuccess).catch(handleError);
+                await  navigator.mediaDevices.getUserMedia({ audio: false, video: { height: 360 , width : 480 ,  frameRate: 30 } }).then(handleSuccess).catch(handleError);
 
             }
 
-            // function loadLabeledImages() {
-            //     const labels = [ {'534' : 'Mert' }];
-			//
-            //     return Promise.all(
-			//
-            //         labels.map(async (value, index) => {
-            //             const descriptions = [];
-            //            for (let arr in value) {
-            //                 const img = await faceapi.fetchImage(`/images/${arr}.jpg`);
-            //                 const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-            //                 descriptions.push(detections.descriptor);
-            //             }
-			//
-            //             return new faceapi.LabeledFaceDescriptors(value, descriptions)
-            //         })
-            //     )
-            // }
-
-
-			// $(".camRequest").on('click' , (e) => { init(e) });
            //  document.querySelector('.camRequest').addEventListener('click', e => init(e));
 
 
