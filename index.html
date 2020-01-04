@@ -76,7 +76,7 @@
 
 						<div class="col mt-3">
 								<div class="shadow mx-auto bg-white rounded p-0"  style="height: 360px; width: 480px; position: relative;">
-										<img src="" id="imgSearch" alt="">
+										<img src="" id="imgSearch" alt="Tespit Edilen Resim">
 								</div>
 						</div>
 
@@ -388,7 +388,7 @@
                                         catch (e) {
                                             console.log(e);
                                         }
-                                        $("#thatwho").html("Adı : " + results.label.toUpperCase() + "<br>" + "İlk Eşleşme Olasılığı : % " + (results.distance.toFixed(2) * 100));
+                                        $("#thatwho").html("Adı : " + results.label.toUpperCase() + "<br>" + "Oran : % " + (results.distance.toFixed(2) * 100));
 
                                     }
 
