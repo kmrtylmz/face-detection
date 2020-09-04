@@ -9,3 +9,10 @@ Yüz tanımayla alakalı bir istek almıştım ve ben de bunu yapabileceğimi d�
 3 gün içinde bir demo hazırladım.Yaparken ekipman olmadıgından HD [720p] desteklemeyen webcam kullandım. Görüntüye etki edebileceğini düşünüerek Css ile filter da ekledim olduda sanki. Aynı zamanda eksiklerini de fark ettim. Kabul edilirse sağlam bir geliştirme yapacağım.  Sunucu problemi yaşarım diye aynı zamanda yapılacak projede geçici kayıtlar oluşturulacağı için front-end tarafında da indexedDB kullandım. Bu Console/Application kısmında da belirir. Testler için tam hazır olmasa da demo için hazır. Her geliştiriciye böyle istekler geleceğini düşünerek faydalı olmasını diliyorum. 
 
 >Ref: justadudewhohacks/face-api.js
+
+
+` npm install `
+
+` node index.js `
+
+`http://localhost:8000`
